@@ -1,16 +1,27 @@
-# This is a sample Python script.
+import sys
+from PyQt5.QtWidgets import QApplication, QWidget
+from PyQt5.QtGui import QColor, QPainter
+from PyQt5.QtCore import Qt
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+class Widget(QWidget):
+    def paintEvent(self, event):
+        super().paintEvent(event)
 
+        painter = QPainter(self)
+        painter.setBrush(Qt.green)
+        painter.drawRect(self.rect())
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+        painter.setPen(QColor(0x00, 0x00, 0x00))
+        painter.drawLine(0,0,50,50)
+        painter.drawPoint(self.width() / 2, self.height() / 2)
 
-
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
+    app = QApplication(sys.argv)
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    w = Widget()
+    w.resize(300, 300)
+    w.move(300, 300)
+    w.setWindowTitle('fractal')
+    w.show()
+
+    sys.exit(app.exec_())
