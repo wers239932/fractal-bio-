@@ -55,12 +55,14 @@ class Widget(QWidget):
         painter.drawText(axes.x_axes - 15, axes.y_axes + 18, "0")
 
     def mandelbrot(self, window: Window, M: int, painter):
-        scale = 80  # abs(window.min_x) + abs(window.max_x)
+        scale = window.size_x/(abs(window.min_x) + abs(window.max_x))
         for y in range(-window.size_y, window.size_y):
             for x in range(-window.size_x, window.size_x):
                 a = x / scale
                 b = y / scale
                 c = complex(a, b)
+                if abs(c) > 2:
+                    continue
                 z = complex(0)
                 n = 0
                 for n in range(M):
@@ -82,7 +84,7 @@ class Widget(QWidget):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    window = Window(-5, 10, -10, 10, 500, 500)
+    window = Window(-2, 2, -10, 10, 500, 500)
     arrow = Arrow(10, 5)
     axes = Axes(window)
 
