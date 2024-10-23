@@ -33,6 +33,13 @@ def mandel_func(x: complex, c: complex):
 
 
 class Widget(QWidget):
+
+    def __init__(self, M: int, fractal: str, c_for_julia: complex):
+        super().__init__()
+        self.M = M
+        self.fractal = fractal
+        self.c_for_julia = c_for_julia
+
     def paintEvent(self, event):
         super().paintEvent(event)
 
@@ -41,7 +48,10 @@ class Widget(QWidget):
         painter.setFont(font)
         painter.setBrush(Qt.white)
         painter.drawRect(self.rect())
-        self.mandelbrot(window, 100, painter)
+        if self.fractal == "julia":
+            self.julia(window, self.M, self.c_for_julia, painter)
+        else:
+            self.mandelbrot(window, self.M, painter)
         painter.setPen(QColor(0xFF, 0xFF, 0xFF))
 
         painter.drawLine(axes.x_axes, 0, axes.x_axes, window.size_y)
@@ -55,7 +65,7 @@ class Widget(QWidget):
         painter.drawText(axes.x_axes - 15, axes.y_axes + 18, "0")
 
     def mandelbrot(self, window: Window, M: int, painter):
-        scale = window.size_x/(abs(window.min_x) + abs(window.max_x))
+        scale = window.size_x / (abs(window.min_x) + abs(window.max_x))
         for y in range(-window.size_y, window.size_y):
             for x in range(-window.size_x, window.size_x):
                 a = x / scale
@@ -70,7 +80,31 @@ class Widget(QWidget):
                     if abs(z) > 2:
                         break
                 if n == M - 1:
-                    print(x, y)
+
+                    r = g = b = 0
+                    painter.setPen(QPen(QColor(r, g, b)))
+                    painter.drawPoint(x + axes.x_axes, -y + axes.y_axes)
+                else:
+                    r = (n % 2) * 32 + 128
+                    g = (n % 4) * 64
+                    b = (n % 2) * 16 + 128
+                    painter.setPen(QPen(QColor(r, g, b)))
+                    painter.drawRect(x + axes.x_axes, -y + axes.y_axes, 1, 1)
+
+    def julia(self, window: Window, M: int, c: complex, painter):
+        scale = window.size_x / (abs(window.min_x) + abs(window.max_x))
+        for y in range(-window.size_y, window.size_y):
+            for x in range(-window.size_x, window.size_x):
+                a = x / scale
+                b = y / scale
+                z = complex(a, b)
+                n = 0
+                for n in range(M):
+                    z = z ** 2 + c
+                    if abs(z) > 2:
+                        break
+                if n == M - 1:
+
                     r = g = b = 0
                     painter.setPen(QPen(QColor(r, g, b)))
                     painter.drawPoint(x + axes.x_axes, -y + axes.y_axes)
@@ -84,11 +118,11 @@ class Widget(QWidget):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    window = Window(-2, 2, -10, 10, 500, 500)
+    window = Window(-2, 2, -2, 2, 500, 500)
     arrow = Arrow(10, 5)
     axes = Axes(window)
 
-    w = Widget()
+    w = Widget(M=20, fractal="julia", c_for_julia=complex(-0.5251993, 0.5251993))
     w.resize(window.size_x, window.size_y)
     w.setFixedSize(w.size())
     w.setWindowTitle('fractal')
