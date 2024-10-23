@@ -41,8 +41,8 @@ class Widget(QWidget):
         painter.setFont(font)
         painter.setBrush(Qt.white)
         painter.drawRect(self.rect())
-
-        painter.setPen(QColor(0x00, 0x00, 0x00))
+        self.mandelbrot(window, 100, painter)
+        painter.setPen(QColor(0xFF, 0xFF, 0xFF))
 
         painter.drawLine(axes.x_axes, 0, axes.x_axes, window.size_y)
         painter.drawLine(0, axes.y_axes, window.size_x, axes.y_axes)
@@ -53,10 +53,8 @@ class Widget(QWidget):
         painter.drawLine(axes.x_axes, 0, axes.x_axes - arrow.width, 0 + arrow.length)
         painter.drawLine(axes.x_axes, 0, axes.x_axes + arrow.width, 0 + arrow.length)
         painter.drawText(axes.x_axes - 15, axes.y_axes + 18, "0")
-        self.mandelbrot(window, 100)
 
-    def mandelbrot(self, window: Window, M: int):
-        painter = QPainter(self)
+    def mandelbrot(self, window: Window, M: int, painter):
         scale = 80  # abs(window.min_x) + abs(window.max_x)
         for y in range(-window.size_y, window.size_y):
             for x in range(-window.size_x, window.size_x):
