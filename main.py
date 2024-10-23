@@ -1,8 +1,8 @@
 import sys
 import cmath
 from PyQt5.QtWidgets import QApplication, QWidget
-from PyQt5.QtGui import QColor, QPainter, QFont
-from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QColor, QPainter, QFont, QPen
+from PyQt5.QtCore import Qt, QRectF
 
 
 class Window:
@@ -28,8 +28,8 @@ class Axes:
         self.y_axes = int(wind.size_y * (-wind.min_y / (wind.max_y - wind.min_y)))
 
 
-def mandel_func(x, c):
-    return x * x + c
+def mandel_func(x: complex, c: complex):
+    return x ** 2 + c
 
 
 class Widget(QWidget):
@@ -53,17 +53,33 @@ class Widget(QWidget):
         painter.drawLine(axes.x_axes, 0, axes.x_axes - arrow.width, 0 + arrow.length)
         painter.drawLine(axes.x_axes, 0, axes.x_axes + arrow.width, 0 + arrow.length)
         painter.drawText(axes.x_axes - 15, axes.y_axes + 18, "0")
+        self.mandelbrot(window, 100)
 
-    # def mandelbrot(window, M):
-    #     matrix = []
-    #     for i in range (0, window.sizeX) :
-    #         matrix.append([])
-    #         for j in range (1, window.sizeY) :
-    #             matrix[i].append([window.minX+(window.maxX-window.minX)*(i/window.sizeX),window.minY-(window.maxX-window.minX)*(i/window.sizeX)])
-    #             x =complex(0,0);
-    #             for l in range (0, M) :
-    #                 x= mandel_func(x, complex(matrix[i][j]))
-    #                 if(abs(x)>2) painter.drawPoint(i,j)
+    def mandelbrot(self, window: Window, M: int):
+        painter = QPainter(self)
+        scale = 80  # abs(window.min_x) + abs(window.max_x)
+        for y in range(-window.size_y, window.size_y):
+            for x in range(-window.size_x, window.size_x):
+                a = x / scale
+                b = y / scale
+                c = complex(a, b)
+                z = complex(0)
+                n = 0
+                for n in range(M):
+                    z = z ** 2 + c
+                    if abs(z) > 2:
+                        break
+                if n == M - 1:
+                    print(x, y)
+                    r = g = b = 0
+                    painter.setPen(QPen(QColor(r, g, b)))
+                    painter.drawPoint(x + axes.x_axes, -y + axes.y_axes)
+                else:
+                    r = (n % 2) * 32 + 128
+                    g = (n % 4) * 64
+                    b = (n % 2) * 16 + 128
+                    painter.setPen(QPen(QColor(r, g, b)))
+                    painter.drawRect(x + axes.x_axes, -y + axes.y_axes, 1, 1)
 
 
 if __name__ == '__main__':
