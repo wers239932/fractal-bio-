@@ -1,4 +1,5 @@
 import sys
+import cmath
 from PyQt5.QtWidgets import QApplication, QWidget
 from PyQt5.QtGui import QColor, QPainter, QFont
 from PyQt5.QtCore import Qt
@@ -22,6 +23,9 @@ class Axes :
         self.xAxes = window.sizeX*(-window.minX/(window.maxX-window.minX))
         self.yAxes = window.sizeY*(-window.minY/(window.maxY-window.minY))
 
+def mandel_func(x, c):
+    return x*x+c
+
 class Widget(QWidget):
     def paintEvent(self, event):
         super().paintEvent(event)
@@ -43,11 +47,18 @@ class Widget(QWidget):
         painter.drawLine(axes.xAxes, 0, axes.xAxes-arrow.width, 0+arrow.length)
         painter.drawLine(axes.xAxes, 0, axes.xAxes+arrow.width, 0+arrow.length)
         painter.drawText(axes.xAxes-15, axes.yAxes+18, "0")
-        # painter.drawText(axes.xAxes-15, axes.yAxes+18, "0")
-        # painter.drawText(axes.xAxes-15, axes.yAxes+18, "0")
-        # painter.drawText(axes.xAxes-15, axes.yAxes+18, "0")
-        # painter.drawText(axes.xAxes-15, axes.yAxes+18, "0")
-        # painter.drawPoint(self.width() / 2, self.height() / 2)
+
+    # def mandelbrot(window, M):
+    #     matrix = []
+    #     for i in range (0, window.sizeX) :
+    #         matrix.append([])
+    #         for j in range (1, window.sizeY) :
+    #             matrix[i].append([window.minX+(window.maxX-window.minX)*(i/window.sizeX),window.minY-(window.maxX-window.minX)*(i/window.sizeX)])
+    #             x =complex(0,0);
+    #             for l in range (0, M) :
+    #                 x= mandel_func(x, complex(matrix[i][j]))
+    #                 if(abs(x)>2) painter.drawPoint(i,j)
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
