@@ -25,14 +25,18 @@ class Arrow:
 class Axes:
     def __init__(self, wind: Window):
         self.x_axes = int(wind.size_x * (-wind.min_x / (wind.max_x - wind.min_x)))
-        self.y_axes = int(wind.size_y * (-wind.min_y / (wind.max_y - wind.min_y)))
+        self.y_axes = int(wind.size_y - wind.size_y * (-wind.min_y / (wind.max_y - wind.min_y)))
 
 
 def mandel_func(x: complex, c: complex):
     return x ** 2 + c
 
+def get_x_coord_by_pixel(x, wind: Window):
+    return (wind.min_x+x*(wind.max_x-wind.min_x)/wind.size_x);
+
 def mandel_func_ship(x: complex, c: complex):
-    return (complex(abs(x.real)+complex(0,1)*complex(abs(x.imag)))) ** 2 + c
+    return (complex(abs(x.real) + complex(0, 1) * complex(abs(x.imag)))) ** 2 + c
+
 
 
 class Widget(QWidget):
@@ -55,7 +59,7 @@ class Widget(QWidget):
             self.julia(window, self.M, self.c_for_julia, painter)
         else:
             self.mandelbrot(window, self.M, painter)
-        print("show")
+
         painter.setPen(QColor(0xFF, 0xFF, 0xFF))
 
         painter.drawLine(axes.x_axes, 0, axes.x_axes, window.size_y)
@@ -67,12 +71,13 @@ class Widget(QWidget):
         painter.drawLine(axes.x_axes, 0, axes.x_axes - arrow.width, 0 + arrow.length)
         painter.drawLine(axes.x_axes, 0, axes.x_axes + arrow.width, 0 + arrow.length)
         painter.drawText(axes.x_axes - 15, axes.y_axes + 18, "0")
+        print("show")
 
     def mandelbrot(self, window: Window, M: int, painter):
         scale = window.size_x / (window.max_x - window.min_x)
         for y in range(-window.size_y, window.size_y):
-            for x in range(-window.size_x, window.size_x):
-                a = x / scale
+            for x in range(0, window.size_x):
+                a = get_x_coord_by_pixel(x, window)
                 b = y / scale
                 c = complex(a, b)
                 if abs(c) > 2:
@@ -87,21 +92,23 @@ class Widget(QWidget):
 
                     r = g = b = 0
                     painter.setPen(QPen(QColor(r, g, b)))
-                    painter.drawPoint(x + axes.x_axes, -y + axes.y_axes)
+                    painter.drawPoint(x, y)
                 else:
                     r = (n % 2) * 32 + 128
                     g = (n % 4) * 64
                     b = (n % 2) * 16 + 128
+
                     painter.setPen(QPen(QColor(r, g, b)))
-                    painter.drawRect(x + axes.x_axes, -y + axes.y_axes, 1, 1)
+                    painter.drawRect(x, y, 1, 1)
 
     def julia(self, window: Window, M: int, c: complex, painter):
         scale = window.size_x / (window.max_x - window.min_x)
-        for y in range(-window.size_y, window.size_y):
-            for x in range(-window.size_x, window.size_x):
-                a = x / scale
-                b = y / scale
+        for y in range(0, window.size_y):
+            for x in range(0, window.size_x):
+                a = get_x_coord_by_pixel(x, window)
+                b = get_y_coord_by_pixel(y, window)
                 z = complex(a, b)
+                #print(z)
                 n = 0
                 for n in range(M):
                     z = mandel_func(z, c)
@@ -111,22 +118,25 @@ class Widget(QWidget):
 
                     r = g = b = 0
                     painter.setPen(QPen(QColor(r, g, b)))
-                    painter.drawPoint(x + axes.x_axes, -y + axes.y_axes)
+                    painter.drawPoint(x, y)
                 else:
                     r = (n % 2) * 32 + 128
                     g = (n % 4) * 64
                     b = (n % 2) * 16 + 128
-                    painter.setPen(QPen(QColor(r, g, b)))
-                    painter.drawRect(x + axes.x_axes, -y + axes.y_axes, 1, 1)
 
+                    painter.setPen(QPen(QColor(r, g, b)))
+                    painter.drawRect(x, y, 1, 1)
+
+def get_y_coord_by_pixel(x, wind: Window):
+    return (wind.min_y+(wind.size_y-x)*(wind.max_y-wind.min_y)/wind.size_y);
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    window = Window(-3, -1, -1, 1, 1000, 1000)
+    window = Window(-0.7, -0.25, -0.7, -0.25, 500, 500)
     arrow = Arrow(10, 5)
     axes = Axes(window)
 
-    w = Widget(M=200, fractal="mandelbrot", c_for_julia=complex(-0.32993, 0.724465654))
+    w = Widget(M=10x`00, fractal="julia", c_for_julia=complex(-0.32993, 0.724465654))
     w.resize(window.size_x, window.size_y)
     w.setFixedSize(w.size())
     w.setWindowTitle('fractal')
