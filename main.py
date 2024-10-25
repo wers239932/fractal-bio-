@@ -6,8 +6,8 @@ from PyQt5.QtCore import Qt, QRectF
 
 
 class Window:
-    def __init__(self, min_x: int, max_x: int, min_y: int,
-                 max_y: int, size_x: int, size_y: int):
+    def __init__(self, min_x: float, max_x: float, min_y: float,
+                 max_y: float, size_x: int, size_y: int):
         self.min_x = min_x
         self.max_x = max_x
         self.min_y = min_y
@@ -55,6 +55,7 @@ class Widget(QWidget):
             self.julia(window, self.M, self.c_for_julia, painter)
         else:
             self.mandelbrot(window, self.M, painter)
+        print("show")
         painter.setPen(QColor(0xFF, 0xFF, 0xFF))
 
         painter.drawLine(axes.x_axes, 0, axes.x_axes, window.size_y)
@@ -68,7 +69,7 @@ class Widget(QWidget):
         painter.drawText(axes.x_axes - 15, axes.y_axes + 18, "0")
 
     def mandelbrot(self, window: Window, M: int, painter):
-        scale = window.size_x / (abs(window.min_x) + abs(window.max_x))
+        scale = window.size_x / (window.max_x - window.min_x)
         for y in range(-window.size_y, window.size_y):
             for x in range(-window.size_x, window.size_x):
                 a = x / scale
@@ -95,7 +96,7 @@ class Widget(QWidget):
                     painter.drawRect(x + axes.x_axes, -y + axes.y_axes, 1, 1)
 
     def julia(self, window: Window, M: int, c: complex, painter):
-        scale = window.size_x / (abs(window.min_x) + abs(window.max_x))
+        scale = window.size_x / (window.max_x - window.min_x)
         for y in range(-window.size_y, window.size_y):
             for x in range(-window.size_x, window.size_x):
                 a = x / scale
@@ -121,7 +122,7 @@ class Widget(QWidget):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    window = Window(-2, 2, -2, 2, 1000, 1000)
+    window = Window(-3, -1, -1, 1, 1000, 1000)
     arrow = Arrow(10, 5)
     axes = Axes(window)
 
