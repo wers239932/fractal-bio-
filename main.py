@@ -35,7 +35,7 @@ def get_x_coord_by_pixel(x, wind: Window):
     return (wind.min_x+x*(wind.max_x-wind.min_x)/wind.size_x);
 
 def mandel_func_ship(x: complex, c: complex):
-    return (complex(abs(x.real) + complex(0, 1) * complex(abs(x.imag)))) ** 2 + c
+    return (complex(abs(x.real) - complex(0, 1) * complex(abs(x.imag)))) ** 2 + c
 
 
 
@@ -78,14 +78,14 @@ class Widget(QWidget):
         for y in range(-window.size_y, window.size_y):
             for x in range(0, window.size_x):
                 a = get_x_coord_by_pixel(x, window)
-                b = y / scale
+                b = get_y_coord_by_pixel(y, window)
                 c = complex(a, b)
                 if abs(c) > 2:
                     continue
                 z = complex(0)
                 n = 0
                 for n in range(M):
-                    z = mandel_func(z, c)
+                    z = mandel_func_ship(z, c)
                     if abs(z) > 2:
                         break
                 if n == M - 1:
@@ -132,11 +132,11 @@ def get_y_coord_by_pixel(x, wind: Window):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    window = Window(-0.7, -0.25, -0.7, -0.25, 500, 500)
+    window = Window(-2,2,-2,2, 1000, 1000)
     arrow = Arrow(10, 5)
     axes = Axes(window)
 
-    w = Widget(M=10x`00, fractal="julia", c_for_julia=complex(-0.32993, 0.724465654))
+    w = Widget(M=20, fractal="mandelbrot", c_for_julia=complex(-0.32993, 0.724465654))
     w.resize(window.size_x, window.size_y)
     w.setFixedSize(w.size())
     w.setWindowTitle('fractal')
