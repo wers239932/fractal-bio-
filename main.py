@@ -31,6 +31,9 @@ class Axes:
 def mandel_func(x: complex, c: complex):
     return x ** 2 + c
 
+def mandel_func_ship(x: complex, c: complex):
+    return (complex(abs(x.real)+complex(0,1)*complex(abs(x.imag)))) ** 2 + c
+
 
 class Widget(QWidget):
 
@@ -76,7 +79,7 @@ class Widget(QWidget):
                 z = complex(0)
                 n = 0
                 for n in range(M):
-                    z = z ** 2 + c
+                    z = mandel_func(z, c)
                     if abs(z) > 2:
                         break
                 if n == M - 1:
@@ -100,7 +103,7 @@ class Widget(QWidget):
                 z = complex(a, b)
                 n = 0
                 for n in range(M):
-                    z = z ** 2 + c
+                    z = mandel_func(z, c)
                     if abs(z) > 2:
                         break
                 if n == M - 1:
@@ -118,11 +121,11 @@ class Widget(QWidget):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    window = Window(-2, 2, -2, 2, 500, 500)
+    window = Window(-2, 2, -2, 2, 1000, 1000)
     arrow = Arrow(10, 5)
     axes = Axes(window)
 
-    w = Widget(M=20, fractal="julia", c_for_julia=complex(-0.5251993, 0.5251993))
+    w = Widget(M=200, fractal="mandelbrot", c_for_julia=complex(-0.32993, 0.724465654))
     w.resize(window.size_x, window.size_y)
     w.setFixedSize(w.size())
     w.setWindowTitle('fractal')
