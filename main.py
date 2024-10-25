@@ -132,7 +132,7 @@ def get_y_coord_by_pixel(x, wind: Window):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    window = Window(-2,2,-2,2, 1000, 1000)
+    window = Window(-1,2,-1,2, 1000, 1000)
     arrow = Arrow(10, 5)
     axes = Axes(window)
 
