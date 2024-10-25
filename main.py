@@ -136,7 +136,7 @@ if __name__ == '__main__':
     arrow = Arrow(10, 5)
     axes = Axes(window)
 
-    w = Widget(M=20, fractal="mandelbrot", c_for_julia=complex(-0.32993, 0.724465654))
+    w = Widget(M=100, fractal="mandelbrot", c_for_julia=complex(-0.32993, 0.724465654))
     w.resize(window.size_x, window.size_y)
     w.setFixedSize(w.size())
     w.setWindowTitle('fractal')
